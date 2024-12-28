@@ -1,4 +1,4 @@
-package com.example.test
+package com.example.Notification.Poller
 
 import org.junit.Test
 
