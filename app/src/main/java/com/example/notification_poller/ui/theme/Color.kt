@@ -1,4 +1,4 @@
-package com.example.Notification.Poller.ui.theme
+package com.example.notification_poller.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

@@ -1,4 +1,4 @@
-package com.example.Notification.Poller.ui.theme
+package com.example.notification_poller.ui.theme
 
 import android.app.Activity
 import android.os.Build

@@ -5,42 +5,52 @@ plugins {
 }
 
 android {
-    namespace = "com.example.test"
+    namespace = "com.example.notification_poller"
     compileSdk = 35
-
+    buildFeatures {
+        buildConfig = true
+    }
     defaultConfig {
-        applicationId = "com.example.test"
-        minSdk = 24
+        applicationId = "com.example.notification_poller"
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
-        release {
+        getByName("release") {
+            buildConfigField("int", "polling_delay", project.findProperty("polling.delay")?.toString() ?: "0")
+            buildConfigField("String", "notifications_url", "\"${project.findProperty("notifications.url")}\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
+
+        getByName("debug") {
+            buildConfigField("int", "polling_delay", project.findProperty("polling.delay")?.toString() ?: "0")
+            buildConfigField("String", "notifications_url", "\"${project.findProperty("notifications.url")}\"")
+        }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
+
     buildFeatures {
         compose = true
     }
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

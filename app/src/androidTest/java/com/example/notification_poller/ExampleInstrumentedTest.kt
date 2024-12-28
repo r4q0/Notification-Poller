@@ -1,4 +1,4 @@
-package com.example.Notification.Poller
+package com.example.notification_poller
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.example.Notification.Poller", appContext.packageName)
+        assertEquals("com.example.notification_poller", appContext.packageName)
     }
 }

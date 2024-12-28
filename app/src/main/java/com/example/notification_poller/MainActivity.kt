@@ -1,6 +1,7 @@
-package com.example.Notification.Poller
+package com.example.notification_poller
 
 import kotlinx.coroutines.*
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
@@ -16,7 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.core.app.NotificationCompat
-import com.example.Notification.Poller.ui.theme.TestTheme
+import com.example.notification_poller.ui.theme.TestTheme
 import org.json.JSONArray
 import android.os.PowerManager
 
@@ -34,6 +35,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Create notification channel if it doesn't exist
+        createNotificationChannel()
+
         // Set content view using Jetpack Compose
         setContent {
             TestTheme {
@@ -45,13 +49,13 @@ class MainActivity : ComponentActivity() {
         }
 
         // This piece of code makes sure the app still works while minimized
-            val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-            val wakeLock = powerManager.newWakeLock(
-                PowerManager.PARTIAL_WAKE_LOCK,
-                "MyApp::WakeLock"
-            )
-            try {
-                wakeLock.acquire()
+        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+        val wakeLock = powerManager.newWakeLock(
+            PowerManager.PARTIAL_WAKE_LOCK,
+            "MyApp::WakeLock"
+        )
+        try {
+            wakeLock.acquire()
 
             // Launch a coroutine for periodic polling
             CoroutineScope(Dispatchers.IO).launch {
@@ -59,25 +63,28 @@ class MainActivity : ComponentActivity() {
                     pollNotifications()
                     Thread.sleep(pollingDelay) // Wait for the next polling cycle
                 }
-            }        } finally {
+            }
+        } finally {
             wakeLock.release()
         }
     }
 
+    // Function to create a notification channel if it doesn't exist
+    private fun createNotificationChannel() {
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-    private fun createChannel(channelId: String, channelName: String, context: Context) {
-        // Check if we're running on Android Oreo or higher
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val importance = NotificationManager.IMPORTANCE_DEFAULT // You can change this based on your needs
-            val channel = NotificationChannel(channelId, channelName, importance).apply {
+        // Check if the channel already exists
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            val existingChannel = notificationManager.getNotificationChannel(channelId)
+            if (existingChannel == null) {
+                // Create the notification channel if it doesn't exist
+                val channel = NotificationChannel(
+                    channelId,
+                    "Default Notifications",
+                    NotificationManager.IMPORTANCE_DEFAULT
+                )
+                notificationManager.createNotificationChannel(channel)
             }
-
-            // Get the system's NotificationManager
-            val notificationManager: NotificationManager =
-                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-            // Create the channel (only on Android Oreo or higher)
-            notificationManager.createNotificationChannel(channel)
         }
     }
 
